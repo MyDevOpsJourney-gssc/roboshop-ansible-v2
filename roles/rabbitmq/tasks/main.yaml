@@ -10,14 +10,14 @@
   service:
       name: rabbitmq-server
       state: started
-      enabled: yes
+      enabled: yes  
 - name: create roboshop mq user
   community.rabbitmq.rabbitmq_user:
-      user: "{{ MQ_USER }}"
+      user: "{{ MQ_USER }}"          
       password: "{{ MQ_PASSWORD }}"
-      permissions:
+      permissions:        
         - vhost: /
           configure_priv: .*
-          read_priv: .*
-          write_priv: .*
-      state: present
+          read_priv: .*        
+          write_priv: .*   
+          state: present         
