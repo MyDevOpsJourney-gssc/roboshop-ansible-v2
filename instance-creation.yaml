@@ -1,0 +1,86 @@
+- name: roboshop instances management
+  hosts: local
+  connection: local
+  vars:
+    instances: ["mongodb", "mysql", "frontend", "redis", "rabbitmq", "catalogue", "user", "cart", "shipping", "payment"]
+    #instances: ["catalogue", "user", "cart", "shipping", "payment" , "frontend"]
+    image_id: ami-0220d79f3f480ecf5
+    domain_name: gssc.online
+    work: delete
+  tasks:
+     - name: create ec2 Instances
+       amazon.aws.ec2_instance:
+          name: "roboshop-{{ item }}"
+          image_id: "{{ image_id }}"
+          instance_type: t3.micro
+          region: us-east-1
+          security_groups: 
+            - roboshop-common
+            - "roboshop-{{ item }}"
+       loop: "{{ instances }}"
+       register: ec2_output
+       when: work == "create"
+
+     - name: print ec2_output
+       debug:
+          msg: "{{ ec2_output }}"
+
+     - name: create R53 record
+       amazon.aws.route53:
+         state: present
+         zone: "{{ domain_name }}"
+         record: "{{ item.item }}.{{ domain_name }}"  #mongodb.gssc.online
+         value: "{{ item.instances[0].private_ip_address }}"
+         type: A
+         ttl: 1
+         overwrite: true
+       loop: "{{ ec2_output.results }}"
+       when: work == "create"
+
+     - name: create Route 53 records for frontend
+       amazon.aws.route53:
+        state: present
+        zone: "{{ domain_name }}"
+        record: "{{ domain_name }}"
+        value: "{{ item.instances[0].public_ip_address }}"
+        ttl: 1
+        type: A
+        overwrite: true
+       loop: "{{ ec2_output.results }}"
+       when: 
+        - work =="create"
+        - item.item == "frontend"
+
+     - name: delete Route53 record 
+       amazon.aws.route53:
+        state: absent
+        ttl: 1
+        type: A
+        record: "{{ item }}.{{ domain_name }}"
+        zone: "{{ domain_name }}"
+       loop: "{{ instances }}"
+       when: work == "delete"
+
+
+     - name: delete Route53 record for Frontend
+       amazon.aws.route53:
+        state: absent
+        ttl: 1
+        type: A
+        zone: "{{ domain_name }}"
+        record: "{{ domain_name }}"
+       loop: "{{ instances }}"
+       when:
+         - item == "frontend"
+         - work == "delete"
+
+
+
+     - name: delete ec2_instances
+       amazon.aws.ec2_instance:
+        state: 'absent'
+        name: "roboshop-{{ item }}"
+        wait: false
+        region: us-east-1
+       loop: "{{ instances }}"
+       when: work == "delete"

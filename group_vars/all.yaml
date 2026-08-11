@@ -1,0 +1,11 @@
+ansible_user: ec2-user
+ansible_password: DevOps321
+MONGODB_HOST: mongodb.gssc.online
+REDIS_HOST: redis.gssc.online
+MYSQL_HOST: mysql.gssc.online
+RABBITMQ_HOST: rabbitmq.gssc.online
+CATALOGUE_HOST: catalogue.gssc.online
+PAYMENT_HOST: payment.gssc.online
+SHIPPING_HOST: shipping.gssc.online
+USER_HOST: user.gssc.online
+CART_HOST: cart.gssc.online
