@@ -7,7 +7,7 @@
     #instances: ["mysql", "rabbitmq"]
     image_id: ami-0220d79f3f480ecf5
     domain_name: gssc.online
-    work: delete
+    work: create
   tasks:
      - name: create ec2 Instances
        amazon.aws.ec2_instance:
