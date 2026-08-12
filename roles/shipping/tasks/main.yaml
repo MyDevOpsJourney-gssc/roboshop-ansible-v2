@@ -36,7 +36,7 @@
     - /app/db/app-user.sql 
     - /app/db/master-data.sql
   
-    - name: enable and start shipping
+    - name: restart
       import_role: 
         name: common
         tasks_from: restart
