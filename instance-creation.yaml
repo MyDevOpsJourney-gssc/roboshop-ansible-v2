@@ -4,7 +4,7 @@
   vars:
     #instances: ["mongodb", "mysql", "frontend", "redis", "rabbitmq", "catalogue", "user", "cart", "shipping", "payment"]
     #instances: ["catalogue", "user", "cart", "shipping", "payment" , "frontend"]
-    instances: ["mongodb", "mysql", "redis", "rabbitmq"]
+    instances: ["mongodb", "redis"]
     image_id: ami-0220d79f3f480ecf5
     domain_name: gssc.online
     work: create
